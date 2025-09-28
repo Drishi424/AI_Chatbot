@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Vanshaj</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f0f2f5;
+      height: 100vh;
+      display: flex;
+      overflow: hidden;
+    }
+    .sidebar {
+      width: 250px;
+      background: #1e293b;
+      color: white;
+      padding: 20px;
+      overflow-y: auto;
+    }
+    .sidebar h2 {
+      font-size: 20px;
+      margin-bottom: 20px;
+      border-bottom: 1px solid #334155;
+      padding-bottom: 10px;
+    }
+    .sidebar a {
+      color: #cbd5e1;
+      text-decoration: none;
+      display: block;
+      margin-bottom: 10px;
+    }
+    .sidebar a:hover {
+      color: #fff;
+    }
+    .main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      background: #2563eb;
+      color: white;
+      padding: 15px 25px;
+      font-size: 18px;
+      font-weight: bold;
+    }
+    .chat-window {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      background-color: #e2e8f0;
+    }
+    .bubble {
+      max-width: 70%;
+      padding: 12px 16px;
+      border-radius: 18px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      line-height: 1.5;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      position: relative;
+    }
+    .user {
+      align-self: flex-end;
+      background: #2563eb;
+      color: white;
+      border-bottom-right-radius: 2px;
+    }
+    .bot {
+      align-self: flex-start;
+      background: #fff;
+      color: black;
+      border-bottom-left-radius: 2px;
+    }
+    .timestamp {
+      font-size: 0.7rem;
+      color: #6b7280;
+      margin-top: 5px;
+      text-align: right;
+    }
+    .bot .timestamp {
+      text-align: left;
+    }
+    form {
+      display: flex;
+      padding: 15px 20px;
+      background: white;
+      border-top: 1px solid #ccc;
+    }
+    input[type="text"] {
+      flex: 1;
+      padding: 10px 15px;
+      font-size: 16px;
+      border-radius: 20px;
+      border: 1px solid #ccc;
+      outline: none;
+    }
+    button {
+      margin-left: 10px;
+      padding: 10px 20px;
+      border: none;
+      background: #2563eb;
+      color: white;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    button:hover {
+      background: #1d4ed8;
+    }
+    @media (max-width: 768px) {
+      .sidebar { display: none; }
+      .main { margin-left: 0; }
+      .bubble { max-width: 90%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <h2>💬 Chats</h2>
+    {% for chat in chats %}
+      <a href="{{ url_for('chatbot', session_id=chat.id) }}">{{ chat.title }}</a>
+    {% endfor %}
+    <hr style="border: 0; border-top: 1px solid #334155; margin: 20px 0;">
+    <a href="{{ url_for('reset') }}">➕ New Chat</a>
+  </div>
+
+  <div class="main">
+    <header>🤖 Vanshaj</header>
+    <div class="chat-window" id="chatWindow">
+      {% for message in history %}
+        {% if message.user %}
+          <div class="bubble user">
+            {{ message.user|safe }}
+            <div class="timestamp">{{ message.timestamp }}</div>
+          </div>
+        {% endif %}
+        {% if message.bot %}
+          <div class="bubble bot">
+            {{ message.bot|safe }}
+            <div class="timestamp">{{ message.timestamp }}</div>
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+
+    <form method="post" autocomplete="off">
+      <input type="text" name="message" placeholder="Type your message..." required />
+      <button type="submit">Send</button>
+    </form>
+  </div>
+
+  <script>
+    const chatWindow = document.getElementById("chatWindow");
+    let offset = parseInt("{{ history|length or 0 }}") || 0;
+
+    let loading = false;
+    const sessionId = "{{ current_session }}";
+
+    function scrollToBottom() {
+      chatWindow.scrollTop = chatWindow.scrollHeight;
+    }
+
+    scrollToBottom();
+
+    chatWindow.addEventListener("scroll", async () => {
+      if (chatWindow.scrollTop === 0 && !loading) {
+        loading = true;
+        const res = await fetch(`/load_more?session_id=${sessionId}&offset=${offset}`);
+        const data = await res.json();
+
+        if (data.messages.length > 0) {
+          const oldHeight = chatWindow.scrollHeight;
+
+          data.messages.reverse().forEach(msg => {
+            const bubble = document.createElement("div");
+            bubble.className = `bubble ${msg.sender}`;
+            bubble.innerHTML = `
+              ${msg.text}
+              <div class="timestamp">${msg.timestamp}</div>
+            `;
+            chatWindow.insertBefore(bubble, chatWindow.firstChild);
+          });
+
+          offset += data.messages.length;
+          chatWindow.scrollTop = chatWindow.scrollHeight - oldHeight;
+        }
+
+        loading = false;
+      }
+    });
+  </script>
+</body>
+</html>

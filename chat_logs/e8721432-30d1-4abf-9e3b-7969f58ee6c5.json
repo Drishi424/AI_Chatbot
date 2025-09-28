@@ -1,0 +1,14 @@
+[
+  {
+    "user": "i have some pain in my body also my eyes are burning can u tell me which disease is this",
+    "bot": "I am an AI chatbot and cannot provide medical advice. Experiencing pain in your body and burning eyes could be related to many different conditions. \n\nTo get an accurate diagnosis, you should consult with a doctor or other qualified healthcare professional. They can properly assess your symptoms, conduct any necessary tests, and recommend the appropriate treatment plan.\n\nPlease seek medical attention as soon as possible."
+  },
+  {
+    "user": "how are u",
+    "bot": "I am doing well, thank you for asking! I am ready and available to assist you with your requests. How can I help you today?"
+  },
+  {
+    "user": "hi",
+    "bot": "Hi there! How can I help you today?"
+  }
+]

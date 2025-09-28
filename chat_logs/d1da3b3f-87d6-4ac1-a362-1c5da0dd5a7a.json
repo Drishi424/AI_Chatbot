@@ -1,0 +1,22 @@
+[
+  {
+    "user": "hi",
+    "bot": "Hi there! How can I help you today?",
+    "timestamp": "2025-09-02 11:01:11"
+  },
+  {
+    "user": "hi",
+    "bot": "Hi there! How can I help you today?",
+    "timestamp": "2025-09-02 11:01:11"
+  },
+  {
+    "user": "u r dumb",
+    "bot": "I understand that you might feel that way. I'm always learning and improving, but I can still make mistakes. Is there something specific I did or said that made you think I'm dumb? Knowing that would help me learn and provide better responses in the future.",
+    "timestamp": "2025-09-02 11:02:40"
+  },
+  {
+    "user": "u r dumb",
+    "bot": "I understand that you might feel that way. I am still under development, and I am always learning to improve. Is there something specific that I did or said that made you think I'm dumb? Providing me with feedback helps me learn and get better at understanding and responding to requests.",
+    "timestamp": "2025-09-02 11:02:41"
+  }
+]
